@@ -1,5 +1,6 @@
 import web
 import datetime;
+import sys
 from gluon import *;
 
 render = web.template.render('templates/')
@@ -49,6 +50,20 @@ class terminal:
 class login:
     def GET(self):
         return render.login()
+    def POST(self):
+        from user_handler import fetchUserByEmail;
+        data_str = ""
+        for key in web.input():
+            data_str += key
+        credentials = data_str.split('\n');
+        email = credentials[0]
+        password = credentials[1]
+        user = fetchUserByEmail(email)
+        if user == None:
+            print "Naspa"
+        print email
+        print password
+        return render.mainpage()
 
 class main_query:
     def GET(self):
@@ -64,5 +79,7 @@ class notes:
         print("Post it")
 
 if __name__ == "__main__":
+    sys.path.append("../");
+    print sys.path
     app = web.application(urls, globals())
     app.run()
