@@ -50,20 +50,23 @@ class terminal:
 class login:
     def GET(self):
         return render.login()
+
     def POST(self):
+        global logged_in
         from user_handler import fetchUserByEmail;
         data_str = ""
         for key in web.input():
             data_str += key
-        credentials = data_str.split('\n');
+        credentials = data_str.split('\n')
         email = credentials[0]
         password = credentials[1]
         user = fetchUserByEmail(email)
         if user == None:
-            print "Naspa"
-        print email
-        print password
-        return render.mainpage()
+            raise Exception("The user doesn't exist")
+        else:
+            if password != user.password:
+                raise Exception("Password is incorrect")
+            raise web.seeother('/')
 
 class main_query:
     def GET(self):
