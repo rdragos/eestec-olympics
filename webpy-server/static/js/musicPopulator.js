@@ -8,6 +8,8 @@ function getTopTracks() {
 	var query = $.ajax({
 		type : "GET",
 		url : scrobblerBaseUrl,
+		crossDomain : true,
+		dataType : "jsonp",
 		data : "api_key=" + scrobblerApiKey + "&" + "method=" + method + "&" + "format=" + format,
   	});
   	return query;
