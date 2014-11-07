@@ -1,14 +1,14 @@
 import web
 import datetime;
 import sys
-from gluon import *;
 
 render = web.template.render('templates/')
 urls = (
     '/login', 'login',
     '/', 'main_query',
     '/post_note', 'notes',
-    '/terminal', 'terminal'
+    '/terminal', 'terminal',
+    '/collect_tasks', 'collect_tasks'
 )
 
 terminal_string = ""
@@ -63,6 +63,7 @@ class login:
             print "Naspa"
         print email
         print password
+
         return render.mainpage()
 
 class main_query:
@@ -70,6 +71,12 @@ class main_query:
         return render.mainpage()
     def POST(self):
         pass
+
+class collect_tasks:
+    def GET(self):
+        from task_handler import fetchTasksFromDb
+        alltasks = fetchTasksFromDb(0, 2)
+        return render.collect_tasks([x.__dict__ for x in alltasks])
 
 class notes:
     def GET(self):
