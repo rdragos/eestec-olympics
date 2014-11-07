@@ -6,7 +6,13 @@ function submit_credentials() {
         type: "POST",
         url: "/login",
         data: email + "\n" + pass,
-        success: null,
-        dataType: null
+        success: function(data) {
+            alert("Success");
+            window.location = "/";
+        },
+        error: function(data) {
+            alert("Error");
+            window.localtion = "/login";
+        }
     });
 }

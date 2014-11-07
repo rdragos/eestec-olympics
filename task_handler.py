@@ -32,6 +32,19 @@ def fetchTasksFromDb(offset , limit) :
     connection.close()
     return tasks
 
+def fetchTasksOfUser(userId):
+    sqlQuery = "SELECT Tasks.* FROM Users Join Tasks On Tasks.UserId = Users.Id where Users.id = %s" % userId
+    connection = psycopg2.connect(conn_string)
+    cursor = connection.cursor()
+    cursor.execute(sqlQuery)
+    record = cursor.fetchall();
+    if (record == None):
+        return None
+    tasks = []
+    for r in record:
+        tasks.append(Task(r[0],r[1],r[2],r[3],r[4],r[5],r[6]))
+    return tasks
+
 def fetchTaskFromDb(id) :
     sqlQuery = "SELECT * FROM Tasks WHERE Id = %s" % id
     connection = psycopg2.connect(conn_string)

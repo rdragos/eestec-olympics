@@ -65,23 +65,37 @@ class terminal:
                     terminal_string += current_string + "\n" + self._process(current_string) + "\n"
         return render.terminal(terminal_string)
 
+def getCompletedTasksPercent(userId):
+    from task_handler import fetchTasksOfUser
+    tasks = fetchTasksOfUser(userId)
+    completed = 0
+    total = 0
+    for task in tasks:
+        if task.completed:
+            completed = completed + 1
+        total = total + 1
+    return (completed / total)
+
 class login:
     def GET(self):
         return render.login()
+
     def POST(self):
+        global logged_in
         from user_handler import fetchUserByEmail;
         data_str = ""
         for key in web.input():
             data_str += key
-        credentials = data_str.split('\n');
+        credentials = data_str.split('\n')
         email = credentials[0]
         password = credentials[1]
         user = fetchUserByEmail(email)
         if user == None:
-            print "Naspa"
-        print email
-        print password
-        return render.mainpage()
+            raise Exception("The user doesn't exist")
+        else:
+            if password != user.password:
+                raise Exception("Password is incorrect")
+            raise web.seeother('/')
 
 class main_query:
     def GET(self):
