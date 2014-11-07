@@ -1,7 +1,6 @@
 import web
 import datetime;
 import sys
-from gluon import *;
 
 render = web.template.render('templates/')
 urls = (
@@ -11,15 +10,34 @@ urls = (
     '/terminal', 'terminal'
 )
 
+def processQuestion(question):
+    questionLowered = question.lower()
+    if questionLowered.find("what is time?") != -1:
+        return datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    if questionLowered.find("who is") != -1:
+        index = questionLowered.find("who is") + len("who is") + 1
+        searchedValue = question[index:]
+        from user_handler import fetchUserByEmail;
+        foundUsers = fetchUsersByFirstNameOrLastNameOrEmail(searchedValue)
+
+        if (len(foundUsers) == 0):
+            return "No user was found!"
+
+        responseString = "I found %s results!" % len(foundUsers)
+        if (len(foundUsers) == 1):
+            responseString = "I found one result!"
+
+        for index in range(0 , len(foundUsers)) :
+            responseString += "%s %s %s\n" % (foundUsers[index].firstName, foundUsers[index].lastName , foundUsers[index].email)
+        return responseString
+    else:
+        return "I can't answer this!"
+
 terminal_string = ""
 first = 0
 class terminal:
     def _process(self, question):
-        question = question.lower()
-        if question.find("cat e ceasul?") != -1:
-            return datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-        else:
-            return "Nu pot raspunde la aceasta intrebare!"
+        return processQuestion()
 
     def GET(self):
         global terminal_string

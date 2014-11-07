@@ -58,6 +58,24 @@ def updateUser(id , user) :
 	connection.commit()
 	connection.close()
 
+def fetchUsersByFirstNameOrLastNameOrEmail(value) :
+	sqlQuery = "SELECT * FROM Users WHERE FirstName = \'%s\' OR LastName = \'%s\' OR Email = \'%s\' " % (value , value , value)
+	connection = psycopg2.connect(conn_string)
+	cursor = connection.cursor()
+	cursor.execute(sqlQuery)
+	records = cursor.fetchall()
+    recordsLength = len(records)
+
+    users = []
+
+    for index in range(0 , recordsLength) :
+        users = User(records[index][0], records[index][1], records[index][2], records[index][3], records[index][4])
+        users.append(users)
+
+    connection.close()
+    return users   
+
+
 if __name__ == "__main__" :
 	newUser = User(0 , "sarpele200@yahoo.com" , "mihai" , "Mihai" , "Catalin")
 	newUser.id = createUser(newUser)
