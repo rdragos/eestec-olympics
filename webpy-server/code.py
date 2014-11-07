@@ -17,7 +17,7 @@ def processQuestion(question):
     if questionLowered.find("who is") != -1:
         index = questionLowered.find("who is") + len("who is") + 1
         searchedValue = question[index:]
-        from user_handler import fetchUserByEmail;
+        from user_handler import fetchUsersByFirstNameOrLastNameOrEmail;
         foundUsers = fetchUsersByFirstNameOrLastNameOrEmail(searchedValue)
 
         if (len(foundUsers) == 0):
@@ -37,7 +37,9 @@ terminal_string = ""
 first = 0
 class terminal:
     def _process(self, question):
-        return processQuestion()
+        resp = processQuestion(question)
+        print resp
+        return resp
 
     def GET(self):
         global terminal_string
