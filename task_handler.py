@@ -5,13 +5,14 @@ import pprint
 conn_string = "host='91.234.168.44' dbname='postgres' user='postgres' password='postgres'"
 
 class Task :
-	def __init__(self , id , userId , title , content , startDate, endDate) :
+	def __init__(self , id , userId , title , content , startDate, endDate, completed = False) :
 		self.id = id
 		self.userId = userId
 		self.title = title
 		self.content = content
 		self.startDate = startDate
 		self.endDate = endDate
+		self.completed = completed
 
 def fetchTasksFromDb(offset , limit) :
 	sqlQuery = "SELECT * FROM Tasks LIMIT %s OFFSET %s" % (limit, offset)
@@ -20,11 +21,11 @@ def fetchTasksFromDb(offset , limit) :
 	cursor.execute(sqlQuery)
 	records = cursor.fetchall()
 	recordsLength = len(records)
-	
+
 	tasks = []
 
 	for index in range(0 , recordsLength) :
-		task = Task(records[index][0], records[index][1], records[index][2], records[index][3], records[index][4], records[index][5])
+		task = Task(records[index][0], records[index][1], records[index][2], records[index][3], records[index][4], records[index][5], records[index][6])
 		tasks.append(task)
 	connection.close()
 	return tasks
@@ -35,12 +36,16 @@ def fetchTaskFromDb(id) :
 	cursor = connection.cursor()
 	cursor.execute(sqlQuery)
 	record = cursor.fetchone()
+
+	if (record == None) :
+		return None
+
 	connection.close()
-	return Task(record[0],record[1],record[2],record[3],record[4],record[5])
+	return Task(record[0],record[1],record[2],record[3],record[4],record[5],record[6])
 
 def createTask(task) :
-	sqlInsert = "INSERT INTO Tasks (userId, title, content, startDate, endDate) " +\
-				"VALUES (%s,\'%s\', \'%s\', \'%s\', \'%s\')" % (task.userId, task.title, task.content, task.startDate, task.endDate) +\
+	sqlInsert = "INSERT INTO Tasks (userId, title, content, startDate, endDate, completed) " +\
+				"VALUES (%s,\'%s\', \'%s\', \'%s\', \'%s\' , %s)" % (task.userId, task.title, task.content, task.startDate, task.endDate , task.completed) +\
 				"RETURNING Id"
 	connection = psycopg2.connect(conn_string)
 	cursor = connection.cursor()
@@ -51,7 +56,7 @@ def createTask(task) :
 	return returnedId[0]
 
 def updateTask(id , task) :
-	sqlUpdate = "UPDATE Tasks SET userId=%s,title=\'%s\',content=\'%s\',startDate=\'%s\',endDate=\'%s\' WHERE id=%s" % (task.userId, task.title, task.content, task.startDate, task.endDate, id)
+	sqlUpdate = "UPDATE Tasks SET userId=%s,title=\'%s\',content=\'%s\',startDate=\'%s\',endDate=\'%s\',completed=%s WHERE id=%s" % (task.userId, task.title, task.content, task.startDate, task.endDate, task.completed, id)
 	connection = psycopg2.connect(conn_string)
 	cursor = connection.cursor()
 	cursor.execute(sqlUpdate)
