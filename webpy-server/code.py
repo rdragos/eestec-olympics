@@ -1,7 +1,6 @@
 import web
 import datetime;
 import sys
-from gluon import *;
 
 render = web.template.render('templates/')
 urls = (
@@ -46,6 +45,17 @@ class terminal:
                     first = 1
                     terminal_string += current_string + "\n" + self._process(current_string) + "\n"
         return render.terminal(terminal_string)
+
+def getCompletedTasksPercent(userId):
+    from task_handler import fetchTasksOfUser
+    tasks = fetchTasksOfUser(userId)
+    completed = 0
+    total = 0
+    for task in tasks:
+        if task.completed:
+            completed = completed + 1
+        total = total + 1
+    return (completed / total)
 
 class login:
     def GET(self):
