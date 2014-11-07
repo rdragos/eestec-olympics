@@ -1,14 +1,14 @@
 
-var apiKey = "d455c0755fdc3ff4c626caeefef6d9fb";
-var baseUrl = "http://ws.audioscrobbler.com/2.0";
+var scrobblerApiKey = "d455c0755fdc3ff4c626caeefef6d9fb";
+var scrobblerBaseUrl = "http://ws.audioscrobbler.com/2.0";
 
 function getTopTracks() {
 	var method = "chart.gettoptracks";
 	var format = "json";
 	var query = $.ajax({
 		type : "GET",
-		url : baseUrl,
-		data : "api_key=" + apiKey + "&" + "method=" + method + "&" + "format=" + format
+		url : scrobblerBaseUrl,
+		data : "api_key=" + scrobblerApiKey + "&" + "method=" + method + "&" + "format=" + format,
   	});
   	return query;
 }
@@ -17,7 +17,6 @@ function populateUi() {
 
 	var request = getTopTracks();
 	request.done(function(data) {
-		console.log(data);
 		for (var index = 0; index < data.tracks.track.length; index++) {
 
 			var track = data.tracks.track[index];
@@ -31,7 +30,7 @@ function populateUi() {
 				}
 			}
 
-			$("#music_list").append("<div class=\"music_container\"><img src = \"{{imageUrl}}\"><div><h2>{{artistName}}</h2><p>{{songName}}</p></div></div>".
+			$("#music-list").append("<div class=\"music-container\"><img src = \"{{imageUrl}}\"><div><h2>{{artistName}}</h2><p>{{songName}}</p></div></div>".
 				replace("{{artistName}}",artistName).replace("{{songName}}",songName).replace("{{imageUrl}}",imageUrl));
 		}
 	});
@@ -43,4 +42,5 @@ function populateUi() {
 
 $(document).ready(function() {
   populateUi();
+  populateUiMovies();
 })
