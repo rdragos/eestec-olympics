@@ -17,7 +17,7 @@ function populateUi() {
 
 	var request = getTopTracks();
 	request.done(function(data) {
-		console.log(data);
+		console.log(data);		
 		for (var index = 0; index < data.tracks.track.length; index++) {
 
 			var track = data.tracks.track[index];
@@ -31,7 +31,7 @@ function populateUi() {
 				}
 			}
 
-			$("#music_list").append("<div class=\"col-xs-6 col-lg-4\"><h2>{{artistName}}</h2><p>{{songName}}</p><img src=\"{{imageUrl}}\" width = \"100\" height = \"100\"</img></div>".
+			$("#music_list").append("<div class=\"col-xs-6 col-lg-4\"><h2>{{artistName}}</h2><p>{{songName}}</p><img src=\"{{imageUrl}}\" width = \"100\" height = \"100\"></img></div>".
 				replace("{{artistName}}",artistName).replace("{{songName}}",songName).replace("{{imageUrl}}",imageUrl));
 		}
 	});
