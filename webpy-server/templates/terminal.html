@@ -1,0 +1,20 @@
+$def with(text_content)
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"> </script>
+        <script src="../static/js/post_it.js" type="text/javascript"></script>
+	</head>
+	<body>
+	<h1>
+	Interactive Terminal
+	</h1>
+    <div class="bs-example">
+        <form role="form">
+        <textarea class="form-control" rows="20" id="text_data"> $text_content </textarea>
+        </form>
+    </div>
+	<a href="" class="btn btn-primary" id="btn_submit" onclick="submit_task('/terminal')">Submit</a>
+	<a href="" class="btn btn-primary" id="btn_clear" onclick="clear_task('/terminal')">Clear</a>
+    </body>
+</html>
