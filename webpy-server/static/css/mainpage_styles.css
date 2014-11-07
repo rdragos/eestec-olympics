@@ -1,0 +1,56 @@
+.nav_bar {
+    position: fixed;
+    top : 0em;
+    left : 0em;
+    background-color: rgba(0,0,255,1);
+    width: 100%;
+    height : 50px;
+    z-index : 100;
+}
+
+.title {
+    width: 100%;
+    height: 50px;
+    font-size: 5em;
+    text-align: center;
+    margin: 1em 0em 1em 0em;
+}
+
+.music_container {
+    margin: 1em 1em 1em 1em;
+	width : 20em;
+	height: 20em;
+	position: relative;
+    float : left;
+}
+
+.music_container img {
+    width : 100%;
+    height: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.music_container div {
+    width: 100%;
+    height: 5.5em;
+    position: absolute;
+    background-color: rgba(0,0,0,0.7);
+    bottom : 0px;
+    left : 0px; 
+}
+
+.music_container div h2 {
+	position: absolute;
+	bottom : 1em;
+	left : 0.3em;
+    font-size: 2em;
+}
+
+.music_container div p {
+	position: absolute;
+	bottom : 0em;
+	left : 0.7em;
+    font-size: 1em;
+}
