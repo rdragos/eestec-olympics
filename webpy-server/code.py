@@ -49,6 +49,18 @@ class terminal:
 class login:
     def GET(self):
         return render.login()
+    def POST(self):
+        data_str = ""
+        for key in web.input():
+            data_str += key
+        credentials = data_str.split('\n');
+        email = credentials[0]
+        password = credentials[1]
+        user = fetchUserByEmail(email)
+        print email
+        print password
+        if user != None:
+            return render.main_query()
 
 class main_query:
     def GET(self):
