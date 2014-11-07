@@ -1,5 +1,4 @@
 
-
 var apiKey = "d455c0755fdc3ff4c626caeefef6d9fb";
 var baseUrl = "http://ws.audioscrobbler.com/2.0";
 
@@ -32,7 +31,7 @@ function populateUi() {
 				}
 			}
 
-			$("#music_list").append("<div class=\"col-xs-6 col-lg-4\"><h2>{{artistName}}</h2><p>{{songName}}</p><img src=\"{{imageUrl}}\" width = \"100\" height = \"100\"</img></div>".
+			$("#music_list").append("<div class=\"music_container\"><img src = \"{{imageUrl}}\"><div><h2>{{artistName}}</h2><p>{{songName}}</p></div></div>".
 				replace("{{artistName}}",artistName).replace("{{songName}}",songName).replace("{{imageUrl}}",imageUrl));
 		}
 	});
