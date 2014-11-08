@@ -15,3 +15,7 @@ function submit_task(url) {
 function clear_task(url) {
     $("#text_data").val("");
 }
+
+$(function(){
+    populateUserDataUi();
+});

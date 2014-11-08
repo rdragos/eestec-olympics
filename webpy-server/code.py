@@ -5,12 +5,13 @@ import json
 
 render = web.template.render('templates/')
 urls = (
-    '/login', 'login',
+    '/login_page', 'login_page',
     '/mainpage', 'mainpage',
     '/post_note', 'notes',
     '/terminal', 'terminal',
     '/bot' , 'bot',
-    '/users' , 'users'
+    '/users' , 'users',
+    '/login' , 'login'
 )
 
 def processQuestion(question):
@@ -41,11 +42,6 @@ class terminal:
     def GET(self):
         return render.terminal()
 
-class bot:
-    def GET(self):
-        terminal_string = web.input()
-        return processQuestion(terminal_string.question)
-
 def getCompletedTasksPercent(userId):
     from task_handler import fetchTasksOfUser
     tasks = fetchTasksOfUser(userId)
@@ -57,7 +53,7 @@ def getCompletedTasksPercent(userId):
         total = total + 1
     return (completed / total)
 
-class login:
+class login_page:
     def GET(self):
         return render.login()
 
@@ -76,6 +72,28 @@ class login:
             if password != user.password:
                 raise Exception("Password is incorrect")
         return "OK"
+
+class bot:
+    def GET(self):
+        terminal_string = web.input()
+        return processQuestion(terminal_string.question)
+
+class login:
+    def GET(self):
+        from user_handler import fetchUserByEmail;
+        webInput = web.input()
+        if ("email" in webInput and "password" in webInput):
+            email = webInput.email
+            password = webInput.password
+            user = fetchUserByEmail(email)
+            if user == None:
+                return "BAD"
+            else:
+                if password != user.password:
+                    return "BAD"
+            return "OK"
+        else:
+            return "BAD"
 
 class users:
     def GET(self):
