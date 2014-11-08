@@ -1,25 +1,21 @@
 
+var alltasks;
 
-var task_cnt = 0;
 function add_details(node, to_textarea) {
   $(node).text("Another text");
   $(node).append("<textarea>to_textarea</textarea>");
 }
+
 function makeNote (e) {
 
     // Check the event object if the .click is on the canvas
     // or a created note
-    if (e.eventPhase === 2) {
-       
+    if (e.eventPhase === 2) {       
        // Create the new comment at the corsor postition
-       var str1 = '<div class="ui-widget-content newbox" style="top:' + e.pageY + 'px; left:' + e.pageX + 'px;">';
+       var str1 = '<div class="ui-widget-content newbox" style="top:' + e.pageX + 'px; left:' + e.pageY + 'px;">';
        node = $(str1).draggable();
        createNewTask(node);
-       task_cnt += 1;
-       $('#canvas').append(node);
-   
-   }
-       
+   }       
 }
 
 function deleteNote() {
@@ -31,21 +27,26 @@ function createNewTask(node) {
     "completed": false,
     "content": "Nothing here",
     "endDate": "01.01.2009",
-    "id": task_cnt + 1,
+    "id": 0,
     "startDate": "01.01.2009",
     "title": "new title",
-    "userId": alltasks[0].id
+    "userId": alltasks[0].userId
   });
 
-  $.ajax({
+  var request = $.ajax({
       type: "POST",
-      url: "/create_new_task",
+      url: "/tasks",
       data: alltasks[alltasks.length - 1],
-      success: function(data) {
-        $(this).parent().append("<text>" + "Succesfully created new" + "</text>");
-      },
       dataType: JSON
-    });
+  });
+  request.success(function (data) {
+    alert(data);
+    $(this).parent().append("<text>" + "Succesfully created new" + "</text>");
+    $('#canvas').append(node);
+  });
+  request.fail(function (data) {
+    console.log(data);
+  });
 }
 // wait until the dom document is loaded
 function updateTask(node, idx) {
@@ -61,8 +62,8 @@ function updateTask(node, idx) {
     alltasks[idx].content = $(this).parent().children(0).eq(1).val();
     alert(alltasks[idx].content);
     $.ajax({
-      type: "POST",
-      url: "/alter_task",
+      type: "PUT",
+      url: "/tasks?id=" + alltasks[idx].id,
       data: alltasks[idx],
       success: function(data) {
         $(this).parent().append("<text>" + "Succesfully updated" + "</text>");
@@ -73,33 +74,54 @@ function updateTask(node, idx) {
   $(node).append(submitButton);
   return $(node);
 }
-$(document).ready(function(){
 
-    alltasks = JSON.parse(alltasks.replace(/'/g, "\"").replace(/False/g, "false"));
-    $('#canvas').click(function(e){
+function getTasks() {
+
+  var userQuery = getUserData();
+  userQuery.done(function(data) {
+
+
+    var userObject = JSON.parse(data);
+    console.log(userObject);
+    var query = $.ajax({
+      type : "GET",
+      url : "/tasks",
+      data : "userId=" + userObject.id
+    });
+    query.done(function(data) {
+      alltasks = JSON.parse(data);
+      $('#canvas').click(function(e){
         makeNote(e);
+      });
+      console.log(alltasks);
+      // Remove the note
+      
+      var posY = 0;
+      var posX = 0;
+
+      for (var idx in alltasks) {
+
+        var task = alltasks[idx];
+        posX += 330;
+        if (posX > $(document).width()) {
+          posX = 0;
+          posY += 330;
+        }
+
+        var str1 = '<div class=\"ui-widget-content newbox\" style=\"top:' +posY + 'px; left:' + posX + 'px;\"></div>';
+        node = $(str1).draggable();
+        node = updateTask(node, idx); 
+        node.css("position" , "absolute");
+        $('#canvas').append(node);
+      }
+      $("#close").click(function () {
+          deleteNote();
+      });
     });
-    // Remove the note
-    
-    var posY = 0;
-    var posX = 0;
+  })
+}
 
-    for (var idx in alltasks) {
-      task_cnt += 1;
-      var task = alltasks[idx];
-      var str1 = '<div class="ui-widget-content newbox" style="top:' + posY + 'px;';
-
-      posY += 10;
-      posX += 10;
-
-      var str1 = '<div class="ui-widget-content newbox" style="top:' +posX + 'px; left:' + posY + 'px;">';
-      node = $(str1).draggable();
-      node = updateTask(node, idx); 
-      $('#canvas').append(node);
-    }
-    $("#close").click(function () {
-        deleteNote();
-    });
-    
+$(document).ready(function(){
+  getTasks();    
 });
 

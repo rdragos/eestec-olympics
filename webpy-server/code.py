@@ -11,7 +11,9 @@ urls = (
     '/terminal', 'terminal',
     '/bot' , 'bot',
     '/users' , 'users',
-    '/login' , 'login'
+    '/login' , 'login',
+    '/tasks' , 'tasks',
+    '/tasks_page', 'tasks_page'
 )
 
 def processQuestion(question):
@@ -122,30 +124,56 @@ class mainpage:
     def POST(self):
         pass
 
-class collect_tasks:
+class tasks:
     def GET(self):
-        from task_handler import fetchTasksFromDb
-        alltasks = fetchTasksFromDb(0, 2)
-        return render.collect_tasks([x.__dict__ for x in alltasks])
+        user_data = web.input()
+        if ("id" in user_data.keys()) :
+            from task_handler import fetchTaskFromDb
+            task = fetchTaskFromDb(user_data.id)
+            if task == None:
+                raise Exception("The task doesn't exist")
+            return json.dumps(task.__dict__)
 
-class notes:
-    def GET(self):
-        return render.post_note()
-    def POST(self):
-        print(web.input())
-        print("Post it")
+        if ("userId" in user_data.keys()) :
+            from task_handler import fetchTasksOfUser
+            tasks = fetchTasksOfUser(user_data.userId)
+            return json.dumps([x.__dict__ for x in tasks])
 
-class alter_task:
+        raise Exception("Bad call")
+
     def POST(self):
-        print(web.input())
-        from task_handler import updateTask
-        from task_handler import fetchTaskFromDb
-        updateTask(web.input().id, web.input())
-        print(fetchTaskFromDb(web.input().id).content)
-class create_new_task:
-     def POST(self):
         from task_handler import createTask
-        createTask(web.input())
+        get_input = web.input(_method='get')
+        post_input = web.input(_method='post')
+        print post_input
+        print get_input
+
+        createTask(post_input);
+        return "OK"
+
+    def PUT(self):
+        from task_handler import updateTask
+        get_input = web.input(_method='get')
+        put_input = web.input(_method='put')
+
+        if ("id" in get_input.keys()):
+            from task_handler import updateTask
+            updateTask(get_input.id, put_input);
+            return "OK"
+        raise Exception("Bad call")
+
+    def DELETE(self):        
+        from task_handler import deleteTask
+        user_data = web.input()
+        if ("id" in user_data.keys()) :
+            from task_handler import deleteTask
+            return "OK"
+        raise Exception("Bad call")
+
+class tasks_page:
+    def GET(self):
+        return render.collect_tasks()
+ 
 if __name__ == "__main__":
     sys.path.append("../");
     print sys.path
