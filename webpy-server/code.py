@@ -58,23 +58,7 @@ def getCompletedTasksPercent(userId):
 class login_page:
     def GET(self):
         return render.login()
-
-    def POST(self):
-        from user_handler import fetchUserByEmail;
-        data_str = ""
-        for key in web.input():
-            data_str += key
-        credentials = data_str.split('\n')
-        email = credentials[0]
-        password = credentials[1]
-        user = fetchUserByEmail(email)
-        if user == None:
-            raise Exception("The user doesn't exist")
-        else:
-            if password != user.password:
-                raise Exception("Password is incorrect")
-        return "OK"
-
+        
 class bot:
     def GET(self):
         terminal_string = web.input()
@@ -145,21 +129,18 @@ class tasks:
         from task_handler import createTask
         get_input = web.input(_method='get')
         post_input = web.input(_method='post')
-        print post_input
-        print get_input
-
-        createTask(post_input);
-        return "OK"
+        createTask(post_input)
+        return ""
 
     def PUT(self):
         from task_handler import updateTask
         get_input = web.input(_method='get')
         put_input = web.input(_method='put')
-
+        
         if ("id" in get_input.keys()):
             from task_handler import updateTask
             updateTask(get_input.id, put_input);
-            return "OK"
+            return ""
         raise Exception("Bad call")
 
     def DELETE(self):        
@@ -167,7 +148,7 @@ class tasks:
         user_data = web.input()
         if ("id" in user_data.keys()) :
             from task_handler import deleteTask
-            return "OK"
+            return
         raise Exception("Bad call")
 
 class tasks_page:
