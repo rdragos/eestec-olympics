@@ -1,4 +1,3 @@
-$def with(text_content)
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="../static/css/reset.css">
@@ -38,10 +37,10 @@ $def with(text_content)
 	</h1>
     <div class="bs-example terminal-container">
         <form role="form">
-        <textarea class="form-control" rows="20" id="text_data"> $text_content </textarea>
+        <textarea class="form-control" rows="20" id="text_data"></textarea>
         </form>
     </div>
-	<a href="" class="btn btn-primary btn-submit-external" id="btn_submit" onclick="submit_task('/terminal')">Submit</a>
-	<a href="" class="btn btn-primary btn-clear-external" id="btn_clear" onclick="clear_task('/terminal')">Clear</a>
+	<a class="btn btn-primary btn-submit-external" id="btn_submit" onclick="submit_task('/terminal')">Submit</a>
+	<a class="btn btn-primary btn-clear-external" id="btn_clear" onclick="clear_task('/terminal')">Clear</a>
     </body>
 </html>
