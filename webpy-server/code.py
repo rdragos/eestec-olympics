@@ -21,7 +21,7 @@ def processQuestion(question):
         foundUsers = fetchUsersByFirstNameOrLastNameOrEmail(searchedValue)
 
         if (len(foundUsers) == 0):
-            return "No user was found!"
+            return "No user was found!\n\n"
 
         responseString = "I found %s results!" % len(foundUsers)
         if (len(foundUsers) == 1):
@@ -33,39 +33,28 @@ def processQuestion(question):
     else:
         return "I can't answer this!"
 
-terminal_string = ""
-first = 0
 class terminal:
+    string = ""
     def _process(self, question):
         resp = processQuestion(question)
         print resp
         return resp
 
     def GET(self):
-        global terminal_string
-        return render.terminal(terminal_string)
+        return render.terminal("")
 
     def POST(self):
         global terminal_string
         global first
+        current_string=""
         for key in web.input():
             current_string = key
-        if current_string.lower().find("clear") != -1:
-            terminal_string = ""
-            first = 0
-        else :
-            pos = current_string.find(terminal_string)
-            current_string = current_string[pos + len(terminal_string) :]
-            current_string.replace('\n', '');
-            if current_string.endswith("\n"):
-                terminal_string += current_string + self._process(current_string)
-            else:
-                if first != 0:
-                    terminal_string += current_string + self._process(current_string) + "\n"
-                else:
-                    first = 1
-                    terminal_string += current_string + "\n" + self._process(current_string) + "\n"
-        return render.terminal(terminal_string)
+        current_string.replace('\n', '');
+        if current_string.endswith("\n"):
+             render.terminal(
+                     string = current_string + self._process(current_string))
+        else:
+            return render.terminal(current_string +  "\n" + self._process(current_string) + "\n")
 
 def getCompletedTasksPercent(userId):
     from task_handler import fetchTasksOfUser
