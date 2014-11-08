@@ -1,73 +1,122 @@
 import web
-import datetime;
+import datetime
 import sys
 import json
+
 render = web.template.render('templates/')
 urls = (
-    '/login', 'login',
-    '/', 'main_query', '/post_note', 'notes',
+    '/login_page', 'login_page',
+    '/mainpage', 'mainpage',
+    '/post_note', 'notes',
     '/terminal', 'terminal',
-    '/collect_tasks', 'collect_tasks',
-    '/alter_task', 'alter_task',
-    '/create_new_task', 'create_new_task'
+    '/bot' , 'bot',
+    '/users' , 'users',
+    '/login' , 'login'
 )
 
-terminal_string = ""
-first = 0
+def processQuestion(question):
+    questionLowered = question.lower()
+    if questionLowered.find("what is time?") != -1:
+        return datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    if questionLowered.find("who is") != -1:
+        index = questionLowered.find("who is") + len("who is") + 1
+        searchedValue = question[index:]
+        from user_handler import fetchUsersByFirstNameOrLastNameOrEmail;
+        foundUsers = fetchUsersByFirstNameOrLastNameOrEmail(searchedValue)
+
+        if (len(foundUsers) == 0):
+            return "No user was found!\n\n"
+
+        responseString = "I found %s results!\n" % len(foundUsers)
+        if (len(foundUsers) == 1):
+            responseString = "I found one result!\n"
+
+        for index in range(0 , len(foundUsers) - 1) :
+            responseString += "%s %s %s\n" % (foundUsers[index].firstName, foundUsers[index].lastName , foundUsers[index].email)
+        responseString += "%s %s %s" % (foundUsers[len(foundUsers) - 1].firstName, foundUsers[ len(foundUsers) - 1].lastName , foundUsers[ len(foundUsers) - 1].email)
+        return responseString
+    else:
+        return "I can't answer this!"
+
 class terminal:
-    def _process(self, question):
-        question = question.lower()
-        if question.find("cat e ceasul?") != -1:
-            return datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-        else:
-            return "Nu pot raspunde la aceasta intrebare!"
-
     def GET(self):
-        global terminal_string
-        return render.terminal(terminal_string)
+        return render.terminal()
 
-    def POST(self):
-        global terminal_string
-        global first
-        for key in web.input():
-            current_string = key
-        if current_string.lower().find("clear") != -1:
-            terminal_string = ""
-            first = 0
-        else :
-            pos = current_string.find(terminal_string)
-            current_string = current_string[pos + len(terminal_string) :]
-            current_string.replace('\n', '');
-            if current_string.endswith("\n"):
-                terminal_string += current_string + self._process(current_string)
-            else:
-                if first != 0:
-                    terminal_string += current_string + self._process(current_string) + "\n"
-                else:
-                    first = 1
-                    terminal_string += current_string + "\n" + self._process(current_string) + "\n"
-        return render.terminal(terminal_string)
+def getCompletedTasksPercent(userId):
+    from task_handler import fetchTasksOfUser
+    tasks = fetchTasksOfUser(userId)
+    completed = 0
+    total = 0
+    for task in tasks:
+        if task.completed:
+            completed = completed + 1
+        total = total + 1
+    return (completed / total)
 
-class login:
+class login_page:
     def GET(self):
         return render.login()
+
     def POST(self):
         from user_handler import fetchUserByEmail;
         data_str = ""
         for key in web.input():
             data_str += key
-        credentials = data_str.split('\n');
+        credentials = data_str.split('\n')
         email = credentials[0]
         password = credentials[1]
         user = fetchUserByEmail(email)
         if user == None:
-            print "Naspa"
-        print email
-        print password
+            raise Exception("The user doesn't exist")
+        else:
+            if password != user.password:
+                raise Exception("Password is incorrect")
+        return "OK"
 
-        return render.mainpage()
+class bot:
+    def GET(self):
+        terminal_string = web.input()
+        return processQuestion(terminal_string.question)
 
-class main_query:
+class login:
+    def GET(self):
+        from user_handler import fetchUserByEmail;
+        webInput = web.input()
+        if ("email" in webInput and "password" in webInput):
+            email = webInput.email
+            password = webInput.password
+            user = fetchUserByEmail(email)
+            if user == None:
+                return "BAD"
+            else:
+                if password != user.password:
+                    return "BAD"
+            return "OK"
+        else:
+            return "BAD"
+
+class users:
+    def GET(self):
+        user_data = web.input()
+        if ("id" in user_data.keys()) :
+            from user_handler import fetchUserById;
+            user = fetchUserById(user_data.id)
+            if user == None:
+                raise Exception("The user doesn't exist")
+            user.password = "*****"
+            return json.dumps(user.__dict__)
+
+        if ("email" in user_data.keys()) :
+            from user_handler import fetchUserByEmail;
+            user = fetchUserByEmail(user_data.email)
+            if user == None:
+                raise Exception("The user doesn't exist")
+            user.password = "*****"
+            return json.dumps(user.__dict__)
+
+        raise Exception("Missing id parameter")
+
+class mainpage:
     def GET(self):
         return render.mainpage()
     def POST(self):

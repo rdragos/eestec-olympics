@@ -1,30 +1,26 @@
-.nav_bar {
-    position: fixed;
-    top : 0em;
-    left : 0em;
-    background-color: rgba(0,0,255,1);
-    width: 100%;
-    height : 50px;
-    z-index : 100;
-}
-
 .title {
     width: 100%;
     height: 50px;
     font-size: 5em;
     text-align: center;
-    margin: 1em 0em 1em 0em;
+    padding: 0em 0em 1.5em 0em;
+    clear: both;
 }
 
-.music_container {
+
+.music-container {
     margin: 1em 1em 1em 1em;
-	width : 20em;
-	height: 20em;
+	width : 22em;
+	height: 22em;
 	position: relative;
     float : left;
 }
 
-.music_container img {
+.music-container:hover {
+    background-color: rgba(0.0,0.0,255,0.1);
+}
+
+.music-container img {
     width : 100%;
     height: 100%;
     position: absolute;
@@ -32,7 +28,7 @@
     top: 0px;
 }
 
-.music_container div {
+.music-container div {
     width: 100%;
     height: 5.5em;
     position: absolute;
@@ -41,14 +37,14 @@
     left : 0px; 
 }
 
-.music_container div h2 {
+.music-container div h2 {
 	position: absolute;
 	bottom : 1em;
 	left : 0.3em;
     font-size: 2em;
 }
 
-.music_container div p {
+.music-container div p {
 	position: absolute;
 	bottom : 0em;
 	left : 0.7em;
