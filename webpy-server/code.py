@@ -24,7 +24,7 @@ def processQuestion(question):
         foundUsers = fetchUsersByFirstNameOrLastNameOrEmail(searchedValue)
 
         if (len(foundUsers) == 0):
-            return "No user was found!"
+            return "No user was found!\n\n"
 
         responseString = "I found %s results!\n" % len(foundUsers)
         if (len(foundUsers) == 1):
