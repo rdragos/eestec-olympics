@@ -1,14 +1,15 @@
 import web
 import datetime;
 import sys
-
+import json
 render = web.template.render('templates/')
 urls = (
     '/login', 'login',
-    '/', 'main_query',
-    '/post_note', 'notes',
+    '/', 'main_query', '/post_note', 'notes',
     '/terminal', 'terminal',
-    '/collect_tasks', 'collect_tasks'
+    '/collect_tasks', 'collect_tasks',
+    '/alter_task', 'alter_task',
+    '/create_new_task', 'create_new_task'
 )
 
 terminal_string = ""
@@ -85,6 +86,17 @@ class notes:
         print(web.input())
         print("Post it")
 
+class alter_task:
+    def POST(self):
+        print(web.input())
+        from task_handler import updateTask
+        from task_handler import fetchTaskFromDb
+        updateTask(web.input().id, web.input())
+        print(fetchTaskFromDb(web.input().id).content)
+class create_new_task:
+     def POST(self):
+        from task_handler import createTask
+        createTask(web.input())
 if __name__ == "__main__":
     sys.path.append("../");
     print sys.path
