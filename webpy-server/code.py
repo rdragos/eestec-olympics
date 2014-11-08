@@ -13,7 +13,8 @@ urls = (
     '/users' , 'users',
     '/login' , 'login',
     '/tasks' , 'tasks',
-    '/tasks_page', 'tasks_page'
+    '/tasks_page', 'tasks_page',
+    '/boring_page', 'boring_page'
 )
 
 def processQuestion(question):
@@ -154,7 +155,11 @@ class tasks:
 class tasks_page:
     def GET(self):
         return render.collect_tasks()
- 
+
+class boring_page:
+    def GET(self):
+        return render.boring_page()
+
 if __name__ == "__main__":
     sys.path.append("../");
     print sys.path
