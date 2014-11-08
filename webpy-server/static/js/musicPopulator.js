@@ -45,4 +45,5 @@ function populateUi() {
 $(document).ready(function() {
   populateUi();
   populateUiMovies();
+  populateUserDataUi();
 })

@@ -2,17 +2,15 @@ function submit_credentials() {
     var email = $("#inputEmail").val();
     var pass = $("#inputPassword").val(); 
     
-    $.ajax({
+    request = $.ajax({
         type: "POST",
         url: "/login",
-        data: email + "\n" + pass,
-        success: function(data) {
-            alert("Success");
-            window.location = "/";
-        },
-        error: function(data) {
-            alert("Error");
-            window.localtion = "/login";
-        }
+        data: email + "\n" + pass
+    });
+
+    request.done(function (data) {
+        alert(email);
+        $.cookie("user_email", email); 
+        window.location = "/mainpage";
     });
 }

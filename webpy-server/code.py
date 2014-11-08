@@ -1,14 +1,16 @@
 import web
-import datetime;
+import datetime
 import sys
+import json
 
 render = web.template.render('templates/')
 urls = (
     '/login', 'login',
-    '/', 'main_query',
+    '/mainpage', 'mainpage',
     '/post_note', 'notes',
     '/terminal', 'terminal',
-    '/bot' , 'bot'
+    '/bot' , 'bot',
+    '/users' , 'users'
 )
 
 def processQuestion(question):
@@ -60,7 +62,6 @@ class login:
         return render.login()
 
     def POST(self):
-        global logged_in
         from user_handler import fetchUserByEmail;
         data_str = ""
         for key in web.input():
@@ -74,9 +75,30 @@ class login:
         else:
             if password != user.password:
                 raise Exception("Password is incorrect")
-            raise web.seeother('/')
+        return "OK"
 
-class main_query:
+class users:
+    def GET(self):
+        user_data = web.input()
+        if ("id" in user_data.keys()) :
+            from user_handler import fetchUserById;
+            user = fetchUserById(user_data.id)
+            if user == None:
+                raise Exception("The user doesn't exist")
+            user.password = "*****"
+            return json.dumps(user.__dict__)
+
+        if ("email" in user_data.keys()) :
+            from user_handler import fetchUserByEmail;
+            user = fetchUserByEmail(user_data.email)
+            if user == None:
+                raise Exception("The user doesn't exist")
+            user.password = "*****"
+            return json.dumps(user.__dict__)
+
+        raise Exception("Missing id parameter")
+
+class mainpage:
     def GET(self):
         return render.mainpage()
     def POST(self):
