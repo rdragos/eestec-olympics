@@ -7,7 +7,8 @@ urls = (
     '/login', 'login',
     '/', 'main_query',
     '/post_note', 'notes',
-    '/terminal', 'terminal'
+    '/terminal', 'terminal',
+    '/bot' , 'bot'
 )
 
 def processQuestion(question):
@@ -23,38 +24,25 @@ def processQuestion(question):
         if (len(foundUsers) == 0):
             return "No user was found!\n\n"
 
-        responseString = "I found %s results!" % len(foundUsers)
+        responseString = "I found %s results!\n" % len(foundUsers)
         if (len(foundUsers) == 1):
-            responseString = "I found one result!"
+            responseString = "I found one result!\n"
 
-        for index in range(0 , len(foundUsers)) :
+        for index in range(0 , len(foundUsers) - 1) :
             responseString += "%s %s %s\n" % (foundUsers[index].firstName, foundUsers[index].lastName , foundUsers[index].email)
+        responseString += "%s %s %s" % (foundUsers[len(foundUsers) - 1].firstName, foundUsers[ len(foundUsers) - 1].lastName , foundUsers[ len(foundUsers) - 1].email)
         return responseString
     else:
         return "I can't answer this!"
 
 class terminal:
-    string = ""
-    def _process(self, question):
-        resp = processQuestion(question)
-        print resp
-        return resp
-
     def GET(self):
-        return render.terminal("")
+        return render.terminal()
 
-    def POST(self):
-        global terminal_string
-        global first
-        current_string=""
-        for key in web.input():
-            current_string = key
-        current_string.replace('\n', '');
-        if current_string.endswith("\n"):
-             render.terminal(
-                     string = current_string + self._process(current_string))
-        else:
-            return render.terminal(current_string +  "\n" + self._process(current_string) + "\n")
+class bot:
+    def GET(self):
+        terminal_string = web.input()
+        return processQuestion(terminal_string.question)
 
 def getCompletedTasksPercent(userId):
     from task_handler import fetchTasksOfUser

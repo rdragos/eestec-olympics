@@ -1,21 +1,17 @@
 function submit_task(url) {
     var data = $("#text_data").val();
-    $.ajax({
-        type: "POST",
-        url: url,
-        data: data,
-        success: null,
-        dataType: null
+    var chunks = data.split('\n');
+    var query = $.ajax({
+        type : "GET",
+        url : "/bot",
+        data : "question=" + chunks[chunks.length - 1].trim()
+    });
+    query.done(function(data) {
+        console.log(data);
+        $("#text_data").val($("#text_data").val() + "\n" + data + "\n");
     });
 }
 
 function clear_task(url) {
-    var data = "clear";
-    $.ajax({
-        type: "POST",
-        url: url,
-        data: "clear",
-        success: null,
-        dataType: null
-    });
+    $("#text_data").val("");
 }
